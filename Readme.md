@@ -8,6 +8,7 @@ tidy_data <- function()
   
   ## 1. Download the zip file
 
+
   if (!dir.exists("./acc_data")) {dir.create("./acc_data")}
 
   fileurl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
@@ -18,6 +19,7 @@ tidy_data <- function()
 
   ## 2. Get the list of file names
 
+
   fnames <- unzip("./acc_data/acc_data.zip", list = TRUE)
 
   test_fnames <- fnames[grepl("_test.txt", fnames$Name),]
@@ -27,6 +29,7 @@ tidy_data <- function()
   
 
   ## 3. Copy the test files to working directory
+
 
   for (i in 1:nrow(test_fnames))
 
@@ -48,7 +51,8 @@ tidy_data <- function()
 
   ## 4. Copy the training files to working directory
 
-  for (i in 1:nrow(train_fnames))
+ 
+ for (i in 1:nrow(train_fnames))
  
   {
  
@@ -66,6 +70,7 @@ tidy_data <- function()
 
   
   ## 5. Get the consolidated Accelerometer readings (w/o gravity) per Subject per activity for test environment
+
 
   data_body_test <- merge_files(file_x = "body_acc_x_test.txt", 
 
@@ -85,6 +90,7 @@ tidy_data <- function()
 
   ## 6. Get the consolidated Gyroscope readings per Subject per activity for test environment
 
+
   data_gyro_test <- merge_files(file_x = "body_gyro_x_test.txt", 
 
                                 file_y = "body_gyro_y_test.txt",
@@ -102,6 +108,7 @@ tidy_data <- function()
   
 
   ## 7. Get the consolidated Accelerometer (w gravity) readings per Subject per activity for test environment
+
 
   data_total_test <- merge_files(file_x = "total_acc_x_test.txt", 
 
@@ -121,6 +128,7 @@ tidy_data <- function()
 
   ## 8. Get the consolidated Accelerometer readings (w/o gravity) per Subject per activity for training environment
 
+
   data_body_train <- merge_files(file_x = "body_acc_x_train.txt",
 
                                  file_y = "body_acc_y_train.txt",
@@ -138,6 +146,7 @@ tidy_data <- function()
   
 
   ## 9. Get the consolidated Gyroscope readings per Subject per activity for training environment
+
 
   data_gyro_train <- merge_files(file_x = "body_gyro_x_train.txt",
 
@@ -157,6 +166,7 @@ tidy_data <- function()
 
   ## 10. Get the consolidated Accelerometer (w gravity) readings per Subject per activity for training environment
 
+
   data_total_train <- merge_files(file_x = "total_acc_x_train.txt",
 
                                   file_y = "total_acc_y_train.txt",
@@ -175,6 +185,7 @@ tidy_data <- function()
 
   ## 11. Final Consolidation
 
+
   body_final <- rbind(data_body_test, data_body_train)
 
   gyro_final <- rbind(data_gyro_test, data_gyro_train)
@@ -186,6 +197,7 @@ tidy_data <- function()
 
   ## 12. Summarize to find Means  
 
+
   summary_body <- ddply(body_final, c("Subject", "Measure"), summarize, body_x_mean = mean(x), 
 
                                                                         body_y_mean = mean(y), 
@@ -195,6 +207,7 @@ tidy_data <- function()
 
 
   
+
   summary_gyro <- ddply(gyro_final, c("Subject", "Measure"), summarize, gyro_x_mean = mean(x), 
 
                                                                         gyro_y_mean = mean(y), 
@@ -203,6 +216,7 @@ tidy_data <- function()
 
 
                         
+
   summary_total <- ddply(total_final, c("Subject", "Measure"), summarize, total_x_mean = mean(x), 
 
                                                                           total_y_mean = mean(y), 
@@ -212,6 +226,7 @@ tidy_data <- function()
 
 
   ## 13. Tidy Data set 
+
 
   final_data <- merge(summary_body, summary_gyro, by = c("Subject", "Measure"))
 
@@ -226,6 +241,7 @@ tidy_data <- function()
 
 
   ## 14. Write to WD
+
 
   write.table(x = final_data, file = "Tidy_Data.txt", row.names = FALSE, sep = "\t", eol = "\n")
 
