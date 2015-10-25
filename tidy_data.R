@@ -6,9 +6,9 @@ tidy_data <- function()
   library(plyr)
   
   # Download the zip file
-  #if (!dir.exists("./acc_data")) {dir.create("./acc_data")}
-  #fileurl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-  #download.file(fileurl, "./acc_data/acc_data.zip")
+  if (!dir.exists("./acc_data")) {dir.create("./acc_data")}
+  fileurl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+  download.file(fileurl, "./acc_data/acc_data.zip")
   
   # Get the list of file names
   fnames <- unzip("./acc_data/acc_data.zip", list = TRUE)
