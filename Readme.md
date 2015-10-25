@@ -4,125 +4,232 @@ tidy_data <- function()
 {
   
   library(plyr)
+
   
   ## 1. Download the zip file
+
   if (!dir.exists("./acc_data")) {dir.create("./acc_data")}
+
   fileurl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+
   download.file(fileurl, "./acc_data/acc_data.zip")
   
 
+
   ## 2. Get the list of file names
+
   fnames <- unzip("./acc_data/acc_data.zip", list = TRUE)
+
   test_fnames <- fnames[grepl("_test.txt", fnames$Name),]
+
   train_fnames <- fnames[grepl("_train.txt", fnames$Name),]
+
   
 
   ## 3. Copy the test files to working directory
+
   for (i in 1:nrow(test_fnames))
+
   {
+
     unzip("./acc_data/acc_data.zip", files = test_fnames$Name[i], exdir = "./acc_data", overwrite = TRUE)
+
     fpath <- paste("./acc_data", test_fnames$Name[i], sep = "/")
+
     posn <- (regexpr("\\/[^\\/]*$", test_fnames$Name[i])) + 1
+
     fnam <- substr(test_fnames$Name[i], posn, nchar(test_fnames$Name[i]))
+
     file.copy(fpath, fnam)
+
   }
+
   
 
   ## 4. Copy the training files to working directory
+
   for (i in 1:nrow(train_fnames))
+ 
   {
+ 
     unzip("./acc_data/acc_data.zip", files = train_fnames$Name[i], exdir = "./acc_data", overwrite = TRUE)
+ 
     fpath <- paste("./acc_data", train_fnames$Name[i], sep = "/")
+ 
     posn <- (regexpr("\\/[^\\/]*$", train_fnames$Name[i])) + 1
+ 
     fnam <- substr(train_fnames$Name[i], posn, nchar(train_fnames$Name[i]))
+ 
     file.copy(fpath, fnam)
+ 
   }
 
   
   ## 5. Get the consolidated Accelerometer readings (w/o gravity) per Subject per activity for test environment
+
   data_body_test <- merge_files(file_x = "body_acc_x_test.txt", 
+
                                 file_y = "body_acc_y_test.txt",
+
                                 file_z = "body_acc_z_test.txt",
+
                                 file_fact = "y_test.txt",
+
                                 file_subject = "subject_test.txt",
+
                                 file_labels = "activity_labels.txt",
+
                                 variable = "Body")
   
+
+
   ## 6. Get the consolidated Gyroscope readings per Subject per activity for test environment
+
   data_gyro_test <- merge_files(file_x = "body_gyro_x_test.txt", 
+
                                 file_y = "body_gyro_y_test.txt",
+
                                 file_z = "body_gyro_z_test.txt",
+
                                 file_fact = "y_test.txt",
+
                                 file_subject = "subject_test.txt",
+
                                 file_labels = "activity_labels.txt",
+
                                 variable = "Gyro")
-  
-  ## 7. Get the consolidated Accelerometer (w gravity) readings per Subject per activity for test environment
-  data_total_test <- merge_files(file_x = "total_acc_x_test.txt", 
-                                 file_y = "total_acc_y_test.txt",
-                                 file_z = "total_acc_z_test.txt",
-                                 file_fact = "y_test.txt",
-                                 file_subject = "subject_test.txt",
-                                 file_labels = "activity_labels.txt",
-                                 variable = "Total")
-  
-  ## 8. Get the consolidated Accelerometer readings (w/o gravity) per Subject per activity for training environment
-  data_body_train <- merge_files(file_x = "body_acc_x_train.txt",
-                                 file_y = "body_acc_y_train.txt",
-                                 file_z = "body_acc_z_train.txt",
-                                 file_fact = "y_train.txt",
-                                 file_subject = "subject_train.txt",
-                                 file_labels = "activity_labels.txt",
-                                 variable = "Body")
-  
-  ## 9. Get the consolidated Gyroscope readings per Subject per activity for training environment
-  data_gyro_train <- merge_files(file_x = "body_gyro_x_train.txt",
-                                 file_y = "body_gyro_y_train.txt",
-                                 file_z = "body_gyro_z_train.txt",
-                                 file_fact = "y_train.txt",
-                                 file_subject = "subject_train.txt",
-                                 file_labels = "activity_labels.txt",
-                                 variable = "Gyro")
-  
-  ## 10. Get the consolidated Accelerometer (w gravity) readings per Subject per activity for training environment
-  data_total_train <- merge_files(file_x = "total_acc_x_train.txt",
-                                  file_y = "total_acc_y_train.txt",
-                                  file_z = "total_acc_z_train.txt",
-                                  file_fact = "y_train.txt",
-                                  file_subject = "subject_train.txt",
-                                  file_labels = "activity_labels.txt",
-                                  variable = "Total")
-  
-  ## 11. Final Consolidation
-  body_final <- rbind(data_body_test, data_body_train)
-  gyro_final <- rbind(data_gyro_test, data_gyro_train)
-  total_final <- rbind(data_total_test, data_total_train)
+
   
 
+  ## 7. Get the consolidated Accelerometer (w gravity) readings per Subject per activity for test environment
+
+  data_total_test <- merge_files(file_x = "total_acc_x_test.txt", 
+
+                                 file_y = "total_acc_y_test.txt",
+
+                                 file_z = "total_acc_z_test.txt",
+
+                                 file_fact = "y_test.txt",
+
+                                 file_subject = "subject_test.txt",
+
+                                 file_labels = "activity_labels.txt",
+
+                                 variable = "Total")
+
+  
+
+  ## 8. Get the consolidated Accelerometer readings (w/o gravity) per Subject per activity for training environment
+
+  data_body_train <- merge_files(file_x = "body_acc_x_train.txt",
+
+                                 file_y = "body_acc_y_train.txt",
+
+                                 file_z = "body_acc_z_train.txt",
+
+                                 file_fact = "y_train.txt",
+
+                                 file_subject = "subject_train.txt",
+
+                                 file_labels = "activity_labels.txt",
+
+                                 variable = "Body")
+
+  
+
+  ## 9. Get the consolidated Gyroscope readings per Subject per activity for training environment
+
+  data_gyro_train <- merge_files(file_x = "body_gyro_x_train.txt",
+
+                                 file_y = "body_gyro_y_train.txt",
+
+                                 file_z = "body_gyro_z_train.txt",
+
+                                 file_fact = "y_train.txt",
+
+                                 file_subject = "subject_train.txt",
+
+                                 file_labels = "activity_labels.txt",
+
+                                 variable = "Gyro")
+
+  
+
+  ## 10. Get the consolidated Accelerometer (w gravity) readings per Subject per activity for training environment
+
+  data_total_train <- merge_files(file_x = "total_acc_x_train.txt",
+
+                                  file_y = "total_acc_y_train.txt",
+
+                                  file_z = "total_acc_z_train.txt",
+
+                                  file_fact = "y_train.txt",
+
+                                  file_subject = "subject_train.txt",
+
+                                  file_labels = "activity_labels.txt",
+
+                                  variable = "Total")
+
+  
+
+  ## 11. Final Consolidation
+
+  body_final <- rbind(data_body_test, data_body_train)
+
+  gyro_final <- rbind(data_gyro_test, data_gyro_train)
+
+  total_final <- rbind(data_total_test, data_total_train)
+
+  
+
+
   ## 12. Summarize to find Means  
+
   summary_body <- ddply(body_final, c("Subject", "Measure"), summarize, body_x_mean = mean(x), 
+
                                                                         body_y_mean = mean(y), 
+
                                                                         body_z_mean = mean(z))
+
+
 
   
   summary_gyro <- ddply(gyro_final, c("Subject", "Measure"), summarize, gyro_x_mean = mean(x), 
+
                                                                         gyro_y_mean = mean(y), 
+
                                                                         gyro_z_mean = mean(z))
+
 
                         
   summary_total <- ddply(total_final, c("Subject", "Measure"), summarize, total_x_mean = mean(x), 
+
                                                                           total_y_mean = mean(y), 
+
                                                                           total_z_mean = mean(z))
 
+
+
   ## 13. Tidy Data set 
+
   final_data <- merge(summary_body, summary_gyro, by = c("Subject", "Measure"))
+
   final_data <- merge(final_data, summary_total, by = c("Subject", "Measure"))
+
   
+
   final_data$Subject <- as.numeric(as.character(final_data$Subject))
+
   final_data[order(final_data$Subject, final_data$Measure), ]
   
+
+
   ## 14. Write to WD
+
   write.table(x = final_data, file = "Tidy_Data.txt", row.names = FALSE, sep = "\t", eol = "\n")
+
+
  
 }
 
